@@ -29,13 +29,11 @@ public class ClientThread
             BufferedReader socIn = null;
             socIn = new BufferedReader(
                     new InputStreamReader(clientSocket.getInputStream()));
-            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
             PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
             while (true) {
                 String line = socIn.readLine();
-                System.out.println(line);
-                line = stdIn.readLine();
                 socOut.println(line);
+                System.out.println(line);
             }
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);
