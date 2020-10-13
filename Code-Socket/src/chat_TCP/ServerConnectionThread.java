@@ -1,0 +1,40 @@
+
+package chat_TCP;
+
+import java.io.*;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ServerConnectionThread {
+
+    static private int totalUserNb;
+
+    public static void main(String args[]){
+
+        int port = 8080;
+
+        ServerSocket listenSocket;
+        List<PrintStream> allClientsSockets = new ArrayList<PrintStream>();
+
+        try {
+            listenSocket = new ServerSocket(port);
+            System.out.println("Server ready...");
+            while (true) {
+                Socket clientSocket = listenSocket.accept(); // bloque jusqu'à ce qu'on ait une demande de connexion
+                System.out.println("Connexion from:" + clientSocket.getInetAddress());
+                allClientsSockets.add(new PrintStream(clientSocket.getOutputStream()));
+                ClientBoundThread ct = new ClientBoundThread(clientSocket, allClientsSockets);
+                ct.start();
+            }
+        } catch (Exception e) {
+            System.err.println("Error in EchoServer:" + e);
+        }
+    }
+
+    public static int newIdAttribution(){
+        totalUserNb += 1;
+        return totalUserNb;
+    }
+
+}
