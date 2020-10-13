@@ -15,8 +15,11 @@ public class ClientReceiverThread extends Thread {
     public void run(){
         try {
             while (true) {
-                String line = socIn.readLine();
-                ChatClient.printMessage(line);
+                String[] line = socIn.readLine().split(" ", 2);
+                if(Integer.parseInt(line[0]) != ChatClient.id){
+                    ChatClient.printMessage(line[1]);
+                }
+
             }
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);

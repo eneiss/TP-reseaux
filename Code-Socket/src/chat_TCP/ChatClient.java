@@ -6,7 +6,7 @@ import java.net.*;
 
 public class ChatClient {
 
-    private static int id;
+    public static int id;
     private static BufferedReader socIn = null;
     private static PrintStream socOut = null;
     private static BufferedReader stdIn = null;
@@ -66,7 +66,7 @@ public class ChatClient {
     // envoi d'un message au serveur
     private static void sendMessage(String message){
         socOut.println(id + " " + message);
-        //System.out.println("Me : " + message);
+        System.out.println("Me : " + message);
     }
 
     private static void sendIDdemand(){
