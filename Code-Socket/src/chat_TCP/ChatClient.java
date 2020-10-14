@@ -14,7 +14,7 @@ public class ChatClient {
     public static void main(String[] args) throws IOException {
 
         int port = 8080;
-        String host = "192.168.137.223"; //"localhost";
+        String host = "localhost"; //"192.168.137.223";
 
         Socket echoSocket = null;
 

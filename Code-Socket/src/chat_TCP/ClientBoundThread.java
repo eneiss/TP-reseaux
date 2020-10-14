@@ -30,7 +30,11 @@ public class ClientBoundThread extends Thread {
             }
 
             // envoyer l'historique au client
-            //socOut.println(" ");
+            List<String> hist = ServerConnectionThread.getHistory();
+            for(String histLine : hist){
+                socOut.println(histLine);
+            }
+            socOut.println("Fin historique");
 
             while (true) {
                 line = socIn.readLine();
