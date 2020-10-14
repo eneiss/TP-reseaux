@@ -9,10 +9,13 @@ import java.util.List;
 public class ServerConnectionThread {
 
     static private int totalUserNb;
+    static private String historyFilePath;
 
     public static void main(String args[]){
 
         int port = 8080;
+
+        historyFilePath = System.getProperty("user.dir") + "/history.txt";
 
         ServerSocket listenSocket;
         List<PrintStream> allClientsSockets = new ArrayList<PrintStream>();
@@ -35,6 +38,12 @@ public class ServerConnectionThread {
     public static int newIdAttribution(){
         totalUserNb += 1;
         return totalUserNb;
+    }
+
+    public static void writeToHistory(String line) throws IOException {
+        FileWriter fw = new FileWriter(historyFilePath, true);
+        fw.write(line + "\n");
+        fw.close();
     }
 
 }

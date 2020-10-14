@@ -38,6 +38,7 @@ public class ClientBoundThread extends Thread {
                     soc.println(line);      // envoie ce qu'il a reçu
                 }
                 System.out.println(line);
+                ServerConnectionThread.writeToHistory(line);
             }
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);
