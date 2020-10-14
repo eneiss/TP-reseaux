@@ -14,7 +14,7 @@ public class ChatClient {
     public static void main(String[] args) throws IOException {
 
         int port = 8080;
-        String host = "localhost";
+        String host = "192.168.137.223"; //"localhost";
 
         Socket echoSocket = null;
 
@@ -38,6 +38,8 @@ public class ChatClient {
         // sinon : envoi au serveur d'une demande d'un nouvel id
         sendIDdemand();
         id = Integer.parseInt(socIn.readLine());
+
+        System.out.println("- Connecté avec l'id " + id + " -");
 
         // demarrage du thread de reception des messages
         ClientReceiverThread ct = new ClientReceiverThread(socIn);
