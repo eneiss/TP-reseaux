@@ -35,7 +35,7 @@ public class ClientBoundThread extends Thread {
             while (true) {
                 line = socIn.readLine();
                 for(PrintStream soc : allClientsSockets) {
-                    soc.println(line);
+                    soc.println(line);      // envoie ce qu'il a reçu
                 }
                 System.out.println(line);
             }
