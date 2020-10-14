@@ -29,7 +29,7 @@ public class ClientBoundThread extends Thread {
                 clientId = Integer.parseInt(line);
             }
 
-            // envoyer les infos de connexion au client
+            // envoyer l'historique au client
             //socOut.println(" ");
 
             while (true) {
