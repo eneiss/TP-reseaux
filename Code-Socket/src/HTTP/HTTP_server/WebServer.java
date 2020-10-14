@@ -23,16 +23,38 @@ public class WebServer {
 
     protected PrintWriter out;
     protected String contentPath = "src/HTTP/HTTP_server";
+    protected Socket remote;
 
     protected void getResource(String resource) throws IOException {
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(contentPath + resource))) {
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                line = bufferedReader.readLine();
-                out.println(line);
-            }
+
+        BufferedReader bufferedReader;
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
         } catch (FileNotFoundException e) {
             System.err.println("File not found: ." + resource);
+            out.println("HTTP/1.1 404 NOT FOUND\n");
+            return;
+        }
+
+        // file found
+
+        String file_type;
+        String[] split_resource = resource.split("\\.");
+        String resource_type = split_resource[split_resource.length - 1];
+        String content_type;
+
+        switch (resource_type){
+            case "html":
+                break;
+            default:
+
+        }
+
+        String line = bufferedReader.readLine();
+        while (line != null) {
+            line = bufferedReader.readLine();
+            out.println(line);
         }
     }
 
@@ -41,18 +63,24 @@ public class WebServer {
         String target = request.get(0).split(" ", 3)[1];
         System.err.println("GET request on " + target);
 
-        switch (target) {
-            case "/somepage.html":
-
-                try {
-                    getResource(target);
-                } catch (IOException e) {
-                    System.err.println("IOException in handleGet on target " + target);
-                }
-                break;
-
-            default:
-                System.err.println("Resource not found, 404 plz");
+        try {
+            if (target.equals("/")){
+                // Send the response
+                // Send the headers
+                out.println("HTTP/1.0 200 OK");
+                out.println("Content-Type: text/html");
+                out.println("Server: Bot");
+                // this blank line signals the end of the headers
+                out.println("");
+                // Send the HTML page
+                out.println("<h1>Welcome to the Ultra Mini-WebServer</h1>");
+                out.flush();
+                remote.close();
+            } else {
+                getResource(target);
+            }
+        } catch (IOException e) {
+            System.err.println("IOException in handleGet on target " + target);
         }
     }
 
@@ -77,7 +105,7 @@ public class WebServer {
             try {
 
                 // wait for a connection
-                Socket remote = s.accept();
+                remote = s.accept();
                 // remote is now the connected socket
                 System.out.println("Connection, sending data.");
                 BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -97,17 +125,6 @@ public class WebServer {
                     handleGet(request);
                 }
 
-                // Send the response
-                // Send the headers
-                out.println("HTTP/1.0 200 OK");
-                out.println("Content-Type: text/html");
-                out.println("Server: Bot");
-                // this blank line signals the end of the headers
-                out.println("");
-                // Send the HTML page
-                out.println("<h1>Welcome to the Ultra Mini-WebServer</h1>");
-                out.flush();
-                remote.close();
 
             } catch (Exception e) {
                 System.out.println("Error: " + e);
