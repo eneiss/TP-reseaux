@@ -3,9 +3,7 @@
 
 package HTTP.HTTP_server;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -23,9 +21,39 @@ import java.util.List;
  */
 public class WebServer {
 
-    protected void handleGet(List<String> request){
+    protected PrintWriter out;
+    protected String contentPath = "src/HTTP/HTTP_server";
+
+    protected void getResource(String resource) throws IOException {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(contentPath + resource))) {
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                line = bufferedReader.readLine();
+                out.println(line);
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: ." + resource);
+        }
+    }
+
+    protected void handleGet(List<String> request) {
+
         String target = request.get(0).split(" ", 3)[1];
         System.err.println("GET request on " + target);
+
+        switch (target) {
+            case "/somepage.html":
+
+                try {
+                    getResource(target);
+                } catch (IOException e) {
+                    System.err.println("IOException in handleGet on target " + target);
+                }
+                break;
+
+            default:
+                System.err.println("Resource not found, 404 plz");
+        }
     }
 
     /**
@@ -47,13 +75,14 @@ public class WebServer {
         System.out.println("Waiting for connection");
         for (; ; ) {
             try {
+
                 // wait for a connection
                 Socket remote = s.accept();
                 // remote is now the connected socket
                 System.out.println("Connection, sending data.");
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         remote.getInputStream()));
-                PrintWriter out = new PrintWriter(remote.getOutputStream());
+                out = new PrintWriter(remote.getOutputStream());
 
                 // read the HTTP headers
                 List<String> request = new ArrayList<String>();
@@ -64,7 +93,7 @@ public class WebServer {
                     request.add(line);
                 } while (!line.equals(""));
 
-                if (request.get(0).substring(0, 3).equals("GET")){
+                if (request.get(0).substring(0, 3).equals("GET")) {
                     handleGet(request);
                 }
 
@@ -79,6 +108,7 @@ public class WebServer {
                 out.println("<h1>Welcome to the Ultra Mini-WebServer</h1>");
                 out.flush();
                 remote.close();
+
             } catch (Exception e) {
                 System.out.println("Error: " + e);
             }
