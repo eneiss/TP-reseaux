@@ -7,13 +7,16 @@ import chat_TCP.ChatClient;
 public class UDPReceiverThread extends Thread {
 
     private MulticastSocket socket;
+    private byte[] buffer;
+    private static final int bufferSize = 1000;
 
     UDPReceiverThread(MulticastSocket socket) {
         this.socket = socket;
     }
 
     public void run(){
-        byte[] buffer = new byte[1000];
+
+        buffer = new byte[bufferSize];
 
         try {
             while (true) {
@@ -27,9 +30,17 @@ public class UDPReceiverThread extends Thread {
 
                 UDPClient.printMessage(new String(recv.getData()));
 
+                clearBuffer();
+
             }
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);
+        }
+    }
+
+    private void clearBuffer(){
+        for (int i = 0; i < bufferSize; ++i){
+            buffer[i] = 0;
         }
     }
 }
