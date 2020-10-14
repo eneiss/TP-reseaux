@@ -9,10 +9,13 @@ import java.util.List;
 public class ServerConnectionThread {
 
     static private int totalUserNb;
+    static private String historyFilePath;
 
     public static void main(String args[]){
 
         int port = 8080;
+
+        historyFilePath = System.getProperty("user.dir") + "/history.txt";
 
         ServerSocket listenSocket;
         List<PrintStream> allClientsSockets = new ArrayList<PrintStream>();
@@ -35,6 +38,26 @@ public class ServerConnectionThread {
     public static int newIdAttribution(){
         totalUserNb += 1;
         return totalUserNb;
+    }
+
+    public static void writeToHistory(String line) throws IOException {
+        FileWriter fw = new FileWriter(historyFilePath, true);
+        fw.write(line + "\n");
+        fw.close();
+    }
+
+    public static List<String> getHistory() throws IOException {
+        List<String> hist = new ArrayList<String>();
+        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(historyFilePath))) {
+            String line = bufferedReader.readLine();
+            while(line != null) {
+                hist.add(line);
+                line = bufferedReader.readLine();
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found :/");
+        }
+        return hist;
     }
 
 }

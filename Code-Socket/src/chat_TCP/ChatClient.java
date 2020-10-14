@@ -15,7 +15,8 @@ public class ChatClient {
 
         int port = 8080;
 //        String host = "192.168.137.223"; //"localhost";
-        String host = "192.168.137.1"; // ip yan
+//        String host = "192.168.137.1"; // ip yan
+        String host = "localhost"; //"192.168.137.223";
 
         Socket echoSocket = null;
 
