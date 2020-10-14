@@ -13,7 +13,7 @@ public class ServerConnectionThread {
 
     public static void main(String args[]){
 
-        int port = 8080;
+        int port = 1235;
 
         historyFilePath = System.getProperty("user.dir") + "/history.txt";
 

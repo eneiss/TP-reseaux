@@ -13,10 +13,10 @@ public class ChatClient {
 
     public static void main(String[] args) throws IOException {
 
-        int port = 8080;
-//        String host = "192.168.137.223"; //"localhost";
-//        String host = "192.168.137.1"; // ip yan
-        String host = "localhost"; //"192.168.137.223";
+        int port = 1235;
+        // String host = "192.168.137.223"; // ip emma;
+        // String host = "192.168.137.1"; // ip yan
+        String host = "localhost"; // c'est le localhost;
 
         Socket echoSocket = null;
 
