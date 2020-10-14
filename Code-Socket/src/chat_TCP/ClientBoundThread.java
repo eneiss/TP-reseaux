@@ -36,14 +36,35 @@ public class ClientBoundThread extends Thread {
             }
             socOut.println("Fin historique");
 
+            // annoncer a tous les autres participants qu'on s'est connecte
+            for(PrintStream soc : allClientsSockets) {
+                soc.println("Connexion " + clientId);
+            }
+
             while (true) {
                 line = socIn.readLine();
+
+                // si le client se deconnecte : on sort de la boucle pour effectuer le processus de deconnexion
+                if(line.equals("Deconnexion")){
+                    break;
+                }
+
                 for(PrintStream soc : allClientsSockets) {
                     soc.println(line);      // envoie ce qu'il a reçu
                 }
                 System.out.println(line);
                 ServerConnectionThread.writeToHistory(line);
             }
+
+            // Deconnexion du client
+            allClientsSockets.remove(socOut);
+            for(PrintStream soc : allClientsSockets) {
+                soc.println("Deconnexion " + clientId);
+            }
+            socOut.close();
+            socIn.close();
+            clientSocket.close();
+
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);
         }

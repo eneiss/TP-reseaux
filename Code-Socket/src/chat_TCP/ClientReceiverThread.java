@@ -20,9 +20,25 @@ public class ClientReceiverThread extends Thread {
         try {
             while (true) {
                 String line = socIn.readLine();
+
                 // on verifie si on arrive a la fin de l'historique
                 if(line.equals("Fin historique")){
                     printOwnMessages = false;
+                    continue;
+                }
+
+                // Message de connexion d'un autre client
+                if(line.length() > 9 && line.substring(0, 9).equals("Connexion")){
+                    // ne pas print si c'est nous-même
+                    if(Integer.parseInt(line.split(" ", 2)[1]) != ChatClient.id) {
+                        ChatClient.printMessage(line);
+                    }
+                    continue;
+                }
+
+                // Message de deconnexion d'un autre client
+                if(line.length() > 11 && line.substring(0, 11).equals("Deconnexion")){
+                    ChatClient.printMessage(line);
                     continue;
                 }
 
@@ -35,7 +51,9 @@ public class ClientReceiverThread extends Thread {
 
             }
         } catch (Exception e) {
-            System.err.println("Error in EchoServer:" + e);
+            if(!e.getMessage().equals("socket closed")) {
+                System.err.println("Error in ClientReceiverThread :" + e);
+            }
         }
     }
 

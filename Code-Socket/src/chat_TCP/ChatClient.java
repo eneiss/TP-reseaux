@@ -65,6 +65,7 @@ public class ChatClient {
             if (line.equals(".")) break;
             sendMessage(line);
         }
+        socOut.println("Deconnexion");
     }
 
     // envoi d'un message au serveur
@@ -80,10 +81,6 @@ public class ChatClient {
     // affichage d'un message reçu sur la console / l'IHM (wip)
     public static void printMessage(String message){
         System.out.println(message);
-    }
-
-    private void restoreHistory(){
-
     }
 
 }
