@@ -1,4 +1,5 @@
-package http.client;
+
+package serv_HTTP;
 
 import java.net.InetAddress;
 import java.net.Socket;

@@ -1,6 +1,7 @@
+
 ///A Simple Web Server (WebServer.java)
 
-package http.server;
+package serv_HTTP;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
