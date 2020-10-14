@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Example program from Chapter 1 Programming Spiders, Bots and Aggregators in
@@ -20,6 +22,11 @@ import java.net.Socket;
  * @version 1.0
  */
 public class WebServer {
+
+    protected void handleGet(List<String> request){
+        String target = request.get(0).split(" ", 3)[1];
+        System.err.println("GET request on " + target);
+    }
 
     /**
      * WebServer constructor.
@@ -48,13 +55,18 @@ public class WebServer {
                         remote.getInputStream()));
                 PrintWriter out = new PrintWriter(remote.getOutputStream());
 
-                // read the data sent. We basically ignore it,
-                // stop reading once a blank line is hit. This
-                // blank line signals the end of the client HTTP
-                // headers.
-                String str = ".";
-                while (str != null && !str.equals(""))
-                    str = in.readLine();
+                // read the HTTP headers
+                List<String> request = new ArrayList<String>();
+                String line;
+                do {
+                    line = in.readLine();
+//                    System.err.println("headers line: " + line);
+                    request.add(line);
+                } while (!line.equals(""));
+
+                if (request.get(0).substring(0, 3).equals("GET")){
+                    handleGet(request);
+                }
 
                 // Send the response
                 // Send the headers
@@ -64,7 +76,7 @@ public class WebServer {
                 // this blank line signals the end of the headers
                 out.println("");
                 // Send the HTML page
-                out.println("<H1>Welcome to the Ultra Mini-WebServer</H2>");
+                out.println("<h1>Welcome to the Ultra Mini-WebServer</h1>");
                 out.flush();
                 remote.close();
             } catch (Exception e) {
@@ -78,7 +90,7 @@ public class WebServer {
      *
      * @param args Command line parameters are not used.
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         WebServer ws = new WebServer();
         ws.start();
     }
