@@ -2,7 +2,6 @@
 package chat_TCP;
 
 import java.io.*;
-import java.net.*;
 
 public class ClientReceiverThread extends Thread {
 
