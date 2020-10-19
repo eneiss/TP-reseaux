@@ -3,6 +3,7 @@
 
 package HTTP.HTTP_server;
 
+import javax.imageio.IIOException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -29,11 +30,13 @@ public class WebServer {
     protected Socket remote;
     protected int port;
     protected String cwd = "./src/HTTP/HTTP_server";
+    private static final int BUFFER_SIZE = 1024;
 
     protected void endResponse() {
         try{
             out.flush();
             remote.close();
+            System.err.println("> End of response");
         } catch (IOException exception){
             System.err.println("Exception caught while ending response");
             exception.printStackTrace();
@@ -76,6 +79,9 @@ public class WebServer {
         out.print(CRLF);
         System.err.print(CRLF);
 
+        // debug may not work
+        out.flush();
+
     }
 
     protected void getResource(String resource) throws IOException {
@@ -105,10 +111,42 @@ public class WebServer {
         if (isBinary){
 
             try {
+                // version d'alex
+//                File file = new File(cwd + resource);
+//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+//
+//                byte[] buffer = new byte[BUFFER_SIZE];
+//                int data;
+//
+//                // send headers since the file was opened successfully
+//                sendHeaders(200, content_type);
+//
+//                // read file data
+//                while ((data = bis.read(buffer)) > 0) {
+//                    baos.write(buffer, 0, data);
+//                }
+//                baos.flush();
+//
+//                byte[] bytes = baos.toByteArray();
+//                baos.close();
+//                remote.getOutputStream().write(bytes);
+//
+//            } catch (IIOException iioe) {
+//                System.err.println("IIOException while opening requested file");
+//                iioe.printStackTrace();
+//                sendHeaders(404);
+//            } catch (Exception e){
+//                e.printStackTrace();
+//                sendHeaders(404);
+//            }
+
+
+//                 -------- OLD
                 File file = new File(cwd + resource);
                 System.err.println("requested binary file path : " + file.toPath().toString());
 
-                // debug
+//                 debug
 //                System.err.println("--- Working Directory = " + System.getProperty("user.dir"));
 //                File test_file = new File("./out/production/Code-Socket/HTTP/HTTP_server/example.html");
 //                if (test_file.isFile()){
@@ -128,7 +166,7 @@ public class WebServer {
                 e.printStackTrace();
             }
 
-        } else {
+        } else {        // non-binary content
 
             BufferedReader bufferedReader;
 
