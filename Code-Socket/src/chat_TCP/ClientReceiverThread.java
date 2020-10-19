@@ -13,47 +13,40 @@ public class ClientReceiverThread extends Thread {
     }
 
     public void run(){
-        // on veut afficher les messages qu'on a nous meme envoye
-        // jusqu'a la fin de l'historique
-        Boolean printOwnMessages = true;
-
         try {
             while (true) {
                 String line = socIn.readLine();
 
                 // on verifie si on arrive a la fin de l'historique
-                if(line.equals("Fin historique")){
-                    printOwnMessages = false;
-                    continue;
-                }
+                //if(line.equals("Fin historique")){
+                //    continue;
+                //}
 
                 // Message de connexion d'un autre client
                 if(line.length() > 9 && line.substring(0, 9).equals("Connexion")){
                     // ne pas print si c'est nous-même
                     if(Integer.parseInt(line.split(" ", 2)[1]) != ChatClient.id) {
-                        ChatClient.printMessage(line);
+                        ChatClient.displayNotif(line);
                     }
                     continue;
                 }
 
                 // Message de deconnexion d'un autre client
                 if(line.length() > 11 && line.substring(0, 11).equals("Deconnexion")){
-                    ChatClient.printMessage(line);
+                    ChatClient.displayNotif(line);
                     continue;
                 }
 
+                // Affichage du message dans le cas general
                 String[] words = line.split(" ", 2);
-                if(Integer.parseInt(words[0]) != ChatClient.id){
-                    ChatClient.printMessage(words[0]+ ": " + words[1]);
-                } else if(printOwnMessages){
-                    ChatClient.printMessage("Me : " + words[1]);
-                }
+                ChatClient.printMessage(words[1], words[0]);
 
             }
         } catch (Exception e) {
-            if(!e.getMessage().equals("socket closed")) {
+            if(!e.getMessage().equals("Socket closed")) {
                 System.err.println("Error in ClientReceiverThread :" + e);
             }
+            System.exit(0);
         }
     }
 
