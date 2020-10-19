@@ -13,19 +13,14 @@ public class ClientReceiverThread extends Thread {
     }
 
     public void run(){
-        // on veut afficher les messages qu'on a nous meme envoye
-        // jusqu'a la fin de l'historique
-        boolean printOwnMessages = true;
-
         try {
             while (true) {
                 String line = socIn.readLine();
 
                 // on verifie si on arrive a la fin de l'historique
-                if(line.equals("Fin historique")){
-                    printOwnMessages = false;
-                    continue;
-                }
+                //if(line.equals("Fin historique")){
+                //    continue;
+                //}
 
                 // Message de connexion d'un autre client
                 if(line.length() > 9 && line.substring(0, 9).equals("Connexion")){
@@ -42,14 +37,9 @@ public class ClientReceiverThread extends Thread {
                     continue;
                 }
 
+                // Affichage du message dans le cas general
                 String[] words = line.split(" ", 2);
                 ChatClient.printMessage(words[1], words[0]);
-//                if(Integer.parseInt(words[0]) != ChatClient.id){
-//                    ChatClient.printMessage(words[1], words[0]);
-//                    ChatClient.printMessage(words[0]+ ": " + words[1]);
-//                } else if(printOwnMessages){
-//                    ChatClient.printMessage("Me : " + words[1]);
-//                }
 
             }
         } catch (Exception e) {

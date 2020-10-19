@@ -14,9 +14,9 @@ public class ClientIHM extends Frame implements ActionListener {
     private TextField inputField;
 
     ClientIHM(){
-        setSize(800,450);//frame size 300 width and 300 height
-        setLayout(null);//no layout manager
-        setVisible(true);//now frame will be visible, by default not visible
+        setSize(800,450);
+        setLayout(null);
+        setVisible(true);
         setTitle("Client Chat");
         setResizable(false);
         this.addWindowListener(new WindowAdapter() {

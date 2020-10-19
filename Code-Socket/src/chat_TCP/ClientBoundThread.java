@@ -34,7 +34,7 @@ public class ClientBoundThread extends Thread {
             for(String histLine : hist){
                 socOut.println(histLine);
             }
-            socOut.println("Fin historique");
+            //socOut.println("Fin historique");
 
             // annoncer a tous les autres participants qu'on s'est connecte
             for(PrintStream soc : allClientsSockets) {
