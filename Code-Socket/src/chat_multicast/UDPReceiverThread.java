@@ -2,7 +2,6 @@ package chat_multicast;
 
 import java.io.*;
 import java.net.*;
-import chat_TCP.ChatClient;
 
 public class UDPReceiverThread extends Thread {
 

@@ -1,6 +1,6 @@
 package chat_multicast;
 
-import chat_TCP.ClientReceiverThread;
+import chat_multicast.UDPReceiverThread;
 
 import java.io.*;
 import java.net.*;

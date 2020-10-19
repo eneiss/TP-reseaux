@@ -143,6 +143,10 @@ public class WebServer {
                 content_type = "image/png";
                 isBinary = true;
                 break;
+            case "mp3":
+                content_type = "audio/mp3";
+                isBinary = true;
+                break;
             default:
                 content_type = "text/plain";
                 break;
