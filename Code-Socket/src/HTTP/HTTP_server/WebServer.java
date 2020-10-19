@@ -28,6 +28,7 @@ public class WebServer {
     protected String contentPath = "src/HTTP/HTTP_server";
     protected Socket remote;
     protected int port;
+    protected String cwd = "./out/production/Code-Socket/HTTP/HTTP_server";
 
     protected void endResponse() {
         try{
@@ -104,10 +105,19 @@ public class WebServer {
         if (isBinary){
 
             try {
-                File file = new File("." + resource);
+                File file = new File(cwd + resource);
                 System.err.println("requested binary file path : " + file.toPath().toString());
 
-                if(file.exists() && !file.isDirectory()) {
+                // debug
+//                System.err.println("--- Working Directory = " + System.getProperty("user.dir"));
+//                File test_file = new File("./out/production/Code-Socket/HTTP/HTTP_server/example.html");
+//                if (test_file.isFile()){
+//                    System.err.println("Test file exists");
+//                } else {
+//                    System.err.println("!!! Test file does NOT exist ! :(");
+//                }
+
+                if(file.isFile()) {
                     sendHeaders(200, content_type);
                     Files.copy(file.toPath(), remote.getOutputStream());
                 } else {    // file not found
