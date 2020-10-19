@@ -26,12 +26,21 @@ public class WebServer {
     protected Socket remote;
     protected int port;
 
+    protected void endResponse() {
+        try{
+            out.flush();
+            remote.close();
+        } catch (IOException exception){
+            System.err.println("Exception caught while ending response");
+            exception.printStackTrace();
+        }
+    }
+
     protected void sendHeaders(int status, String content_type){
 
         String CRLF = "\r\n";
+        System.err.println("========== RESPONSE SENT ==========");
         out.print("HTTP/1.0 ");
-
-        System.err.println("========== DEBUG OUTPUT ==========");
         System.err.print("HTTP/1.0 ");
 
         switch (status){
@@ -41,11 +50,15 @@ public class WebServer {
                 break;
             case 404:
                 out.print("404 NOT_FOUND" + CRLF);
-                System.err.print("404 NOT FOUND" + CRLF);
+                System.err.print("404 NOT_FOUND" + CRLF);
+                break;
+            case 400:
+                out.print("400 BAD_REQUEST" + CRLF);
+                System.err.print("400 BAD_REQUEST" + CRLF);
                 break;
             default:
                 out.print("500 SERVER_ERROR" + CRLF);
-                System.err.print("500 SERVER ERROR" + CRLF);
+                System.err.print("500 SERVER_ERROR" + CRLF);
                 break;
         }
 
@@ -54,6 +67,7 @@ public class WebServer {
 
         out.print(CRLF);
         System.err.print(CRLF);
+
     }
 
     protected void getResource(String resource) throws IOException {
@@ -65,14 +79,12 @@ public class WebServer {
         } catch (FileNotFoundException e) {
             System.err.println("File not found: ." + resource);
             sendHeaders(404, "text/html");
-            out.flush();
-            remote.close();
+            endResponse();
             return;
         }
 
         // file found
 
-        String file_type;
         String[] split_resource = resource.split("\\.");
         String resource_type = split_resource[split_resource.length - 1];
         String content_type;
@@ -83,6 +95,9 @@ public class WebServer {
                 break;
             case "txt":
                 content_type = "text/plain";
+                break;
+            case "png":
+                content_type = "image/png";
                 break;
             default:
                 content_type = "text/plain";
@@ -99,8 +114,13 @@ public class WebServer {
             out.println(line);
         }
 
-        out.flush();
-        remote.close();
+        endResponse();
+
+//        try {
+//            endResponse();
+//        } catch (IOException e){
+//            e.printStackTrace();
+//        }
     }
 
     protected void handleGet(List<String> request) {
@@ -109,7 +129,7 @@ public class WebServer {
         System.err.println("GET request on " + target);
 
         try {
-            if (target.equals("/")){
+            if (target.equals("/")){    // main dummy page
                 // Send the response
                 // Send the headers
                 out.println("HTTP/1.0 200 OK");
@@ -119,14 +139,25 @@ public class WebServer {
                 out.println("");
                 // Send the HTML page
                 out.println("<h1>Welcome to the Ultra Mini-WebServer</h1>");
-                out.flush();
-                remote.close();
+
+                endResponse();
             } else {
                 getResource(target);
             }
         } catch (IOException e) {
             System.err.println("IOException in handleGet on target " + target);
         }
+    }
+
+
+    private void handlePost(List<String> request) {
+        // TODO
+        System.err.println("POST request received");
+    }
+
+    private void handleDelete(List<String> request) {
+        // TODO
+        System.err.println("DELETE request received");
     }
 
     /**
@@ -168,8 +199,21 @@ public class WebServer {
                     request.add(line);
                 } while (!line.equals(""));
 
-                if (request.get(0).substring(0, 3).equals("GET")) {
-                    handleGet(request);
+                String request_type = request.get(0).split(" ")[0];
+                switch (request_type){
+                    case "GET":
+                        handleGet(request);
+                        break;
+                    case "POST":
+                        handlePost(request);
+                        break;
+                    case "DELETE":
+                        handleDelete(request);
+                        break;
+                    default:
+                        sendHeaders(400, "text/html");
+                        endResponse();
+                        break;
                 }
 
 
