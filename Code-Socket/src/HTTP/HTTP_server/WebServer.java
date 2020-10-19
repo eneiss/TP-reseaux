@@ -24,6 +24,51 @@ public class WebServer {
     protected PrintWriter out;
     protected String contentPath = "src/HTTP/HTTP_server";
     protected Socket remote;
+    protected int port;
+
+    protected void endResponse() {
+        try{
+            out.flush();
+            remote.close();
+        } catch (IOException exception){
+            System.err.println("Exception caught while ending response");
+            exception.printStackTrace();
+        }
+    }
+
+    protected void sendHeaders(int status, String content_type){
+
+        String CRLF = "\r\n";
+        System.err.println("========== RESPONSE SENT ==========");
+        out.print("HTTP/1.0 ");
+        System.err.print("HTTP/1.0 ");
+
+        switch (status){
+            case 200:
+                out.print("200 OK" + CRLF);
+                System.err.print("200 OK" + CRLF);
+                break;
+            case 404:
+                out.print("404 NOT_FOUND" + CRLF);
+                System.err.print("404 NOT_FOUND" + CRLF);
+                break;
+            case 400:
+                out.print("400 BAD_REQUEST" + CRLF);
+                System.err.print("400 BAD_REQUEST" + CRLF);
+                break;
+            default:
+                out.print("500 SERVER_ERROR" + CRLF);
+                System.err.print("500 SERVER_ERROR" + CRLF);
+                break;
+        }
+
+        out.print("Content-Type: " + content_type + CRLF);
+        System.err.print("Content-Type: " + content_type + CRLF);
+
+        out.print(CRLF);
+        System.err.print(CRLF);
+
+    }
 
     protected void getResource(String resource) throws IOException {
 
@@ -33,29 +78,44 @@ public class WebServer {
             bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
         } catch (FileNotFoundException e) {
             System.err.println("File not found: ." + resource);
-            out.println("HTTP/1.1 404 NOT FOUND\n");
+            sendHeaders(404, "text/html");
+            endResponse();
             return;
         }
 
         // file found
 
-        String file_type;
         String[] split_resource = resource.split("\\.");
         String resource_type = split_resource[split_resource.length - 1];
         String content_type;
 
         switch (resource_type){
             case "html":
+                content_type = "text/html";
+                break;
+            case "txt":
+                content_type = "text/plain";
+                break;
+            case "png":
+                content_type = "image/png";
                 break;
             default:
-
+                content_type = "text/plain";
+                break;
         }
+
+        System.err.println("content : " + content_type);
+
+        sendHeaders(200, content_type);
 
         String line = bufferedReader.readLine();
         while (line != null) {
-            line = bufferedReader.readLine();
             out.println(line);
+            line = bufferedReader.readLine();
         }
+
+        endResponse();
+
     }
 
     protected void handleGet(List<String> request) {
@@ -64,7 +124,7 @@ public class WebServer {
         System.err.println("GET request on " + target);
 
         try {
-            if (target.equals("/")){
+            if (target.equals("/")){    // main dummy page
                 // Send the response
                 // Send the headers
                 out.println("HTTP/1.0 200 OK");
@@ -74,8 +134,8 @@ public class WebServer {
                 out.println("");
                 // Send the HTML page
                 out.println("<h1>Welcome to the Ultra Mini-WebServer</h1>");
-                out.flush();
-                remote.close();
+
+                endResponse();
             } else {
                 getResource(target);
             }
@@ -84,19 +144,32 @@ public class WebServer {
         }
     }
 
+
+    private void handlePost(List<String> request) {
+        // TODO
+        System.err.println("POST request received");
+    }
+
+    private void handleDelete(List<String> request) {
+        // TODO
+        System.err.println("DELETE request received");
+    }
+
     /**
      * WebServer constructor.
      */
-    protected void start() {
+    protected void start(int port) {
         ServerSocket s;
+        this.port = port;
 
-        System.out.println("Webserver starting up on port 3000");
+        System.out.println("Webserver starting up on port " + Integer.toString(port));
         System.out.println("(press ctrl-c to exit)");
         try {
             // create the main server socket
-            s = new ServerSocket(3000);
+            s = new ServerSocket(port);
         } catch (Exception e) {
             System.out.println("Error: " + e);
+            e.printStackTrace();
             return;
         }
 
@@ -121,8 +194,21 @@ public class WebServer {
                     request.add(line);
                 } while (!line.equals(""));
 
-                if (request.get(0).substring(0, 3).equals("GET")) {
-                    handleGet(request);
+                String request_type = request.get(0).split(" ")[0];
+                switch (request_type){
+                    case "GET":
+                        handleGet(request);
+                        break;
+                    case "POST":
+                        handlePost(request);
+                        break;
+                    case "DELETE":
+                        handleDelete(request);
+                        break;
+                    default:
+                        sendHeaders(400, "text/html");
+                        endResponse();
+                        break;
                 }
 
 
@@ -138,7 +224,13 @@ public class WebServer {
      * @param args Command line parameters are not used.
      */
     public static void main(String[] args) {
+
+        if (args.length != 1) {
+            System.out.println("Usage: java WebServer <WebServer port>");
+            System.exit(1);
+        }
+
         WebServer ws = new WebServer();
-        ws.start();
+        ws.start(Integer.parseInt(args[0]));
     }
 }
