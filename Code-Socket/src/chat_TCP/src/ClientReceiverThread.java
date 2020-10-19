@@ -1,5 +1,5 @@
 
-package chat_TCP;
+package chat_TCP.src;
 
 import java.io.*;
 
