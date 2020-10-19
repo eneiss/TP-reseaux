@@ -15,7 +15,7 @@ public class ClientIHM extends Frame implements ActionListener {
 
     ClientIHM(){
         setSize(800,450);//frame size 300 width and 300 height
-        setLayout(new FlowLayout());//no layout manager
+        setLayout(null);//no layout manager
         setVisible(true);//now frame will be visible, by default not visible
         setTitle("Client Chat");
         setResizable(false);
