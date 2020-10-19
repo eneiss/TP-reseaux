@@ -236,12 +236,19 @@ public class WebServer {
         System.err.println("DELETE request on " + target);
 
         if (target.equals("/deleteme.txt")){
-            // todo
-            // fixme passer en 200 et renvoyer une petite page ?
+            // todo passer en 200 et renvoyer une petite page ?
             System.err.println("TODO delete file");
-            sendHeaders(204);
-            endResponse();
-        }else{
+
+            File toDelete = new File(cwd + target);
+            if (toDelete.delete()) {
+                System.err.println("Deleted the file: " + toDelete.getName());
+                sendHeaders(204);
+                endResponse();
+            } else {
+                System.err.println("Failed to delete the file.");
+                notFound();
+            }
+        }else{  // trying to delete a file that cannon be deleted
             forbidden();
         }
 
