@@ -6,6 +6,9 @@ package HTTP.HTTP_server;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +37,10 @@ public class WebServer {
             System.err.println("Exception caught while ending response");
             exception.printStackTrace();
         }
+    }
+
+    protected void sendHeaders(int status){
+        sendHeaders(status, "text/html");
     }
 
     protected void sendHeaders(int status, String content_type){
@@ -72,22 +79,11 @@ public class WebServer {
 
     protected void getResource(String resource) throws IOException {
 
-        BufferedReader bufferedReader;
-
-        try {
-            bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found: ." + resource);
-            sendHeaders(404, "text/html");
-            endResponse();
-            return;
-        }
-
-        // file found
-
+        // find resource type
         String[] split_resource = resource.split("\\.");
         String resource_type = split_resource[split_resource.length - 1];
         String content_type;
+        boolean isBinary = false;
 
         switch (resource_type){
             case "html":
@@ -98,21 +94,56 @@ public class WebServer {
                 break;
             case "png":
                 content_type = "image/png";
+                isBinary = true;
                 break;
             default:
                 content_type = "text/plain";
                 break;
         }
 
-        System.err.println("content : " + content_type);
+        if (isBinary){
 
-        sendHeaders(200, content_type);
+            try {
+                File file = new File("." + resource);
+                System.err.println("requested binary file path : " + file.toPath().toString());
 
-        String line = bufferedReader.readLine();
-        while (line != null) {
-            out.println(line);
-            line = bufferedReader.readLine();
-        }
+                if(file.exists() && !file.isDirectory()) {
+                    sendHeaders(200, content_type);
+                    Files.copy(file.toPath(), remote.getOutputStream());
+                } else {    // file not found
+                    System.err.println("Binary file not found : " + resource);
+                    sendHeaders(404);
+                }
+            } catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
+        } else {
+
+            BufferedReader bufferedReader;
+
+            try {
+                bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
+            } catch (FileNotFoundException e) {
+                System.err.println("File not found: ." + resource);
+                sendHeaders(404);
+                endResponse();
+                return;
+            }
+
+            // file found
+
+            System.err.println("content : " + content_type);
+
+            sendHeaders(200, content_type);
+
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                out.println(line);
+                line = bufferedReader.readLine();
+            }
+
+        }       // resource not binary
 
         endResponse();
 
