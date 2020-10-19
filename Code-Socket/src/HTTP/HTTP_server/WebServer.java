@@ -75,6 +75,9 @@ public class WebServer {
 
     }
 
+    protected void sendHeaders(int status){
+        sendHeaders(status, "text/html");
+    }
 
     protected void sendHeaders(int status, String content_type){
 
@@ -99,6 +102,10 @@ public class WebServer {
             case 400:
                 out.print("400 BAD_REQUEST" + CRLF);
                 System.err.print("400 BAD_REQUEST" + CRLF);
+                break;
+            case 204:
+                out.print("204 NO_CONTENT" + CRLF);
+                System.err.print("204 NO_CONTENT" + CRLF);
                 break;
             default:
                 out.print("500 SERVER_ERROR" + CRLF);
@@ -153,7 +160,6 @@ public class WebServer {
                     Files.copy(file.toPath(), remote.getOutputStream());
                 } else {    // file not found
                     System.err.println("Binary file not found : " + resource);
-//                    sendHeaders(404);
                     notFound();
                     return;
                 }
@@ -231,7 +237,10 @@ public class WebServer {
 
         if (target.equals("/deleteme.txt")){
             // todo
+            // fixme passer en 200 et renvoyer une petite page ?
             System.err.println("TODO delete file");
+            sendHeaders(204);
+            endResponse();
         }else{
             forbidden();
         }
