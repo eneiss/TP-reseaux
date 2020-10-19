@@ -76,7 +76,11 @@ public class ChatClient {
 
     // affichage d'un message reçu sur la console / l'IHM (wip)
     public static void printMessage(String message, String senderId){
-        window.printMessage(message, senderId);
+        if(Integer.parseInt(senderId) == id){
+            window.printMessage(message, "   Me");
+        } else {
+            window.printMessage(message, senderId);
+        }
     }
 
     // affichage d'un message reçu sur la console / l'IHM (wip)
