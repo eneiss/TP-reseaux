@@ -35,6 +35,10 @@ public class ServerConnectionThread {
         }
     }
 
+    /**
+     * Attribue un ID actuellement utilisé, pour utilisation par un client.
+     * @return l'ID attribué
+     */
     public static int newIdAttribution(){
         totalUserNb += 1;
         return totalUserNb;

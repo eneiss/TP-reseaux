@@ -2,7 +2,6 @@
 package chat_TCP;
 
 import java.io.*;
-import java.net.*;
 
 public class ClientReceiverThread extends Thread {
 
@@ -43,7 +42,7 @@ public class ClientReceiverThread extends Thread {
 
             }
         } catch (Exception e) {
-            if(!e.getMessage().equals("Socket closed")) {
+            if(!(e.getMessage().equals("Socket closed") ||e.getMessage().equals("socket closed"))) {
                 System.err.println("Error in ClientReceiverThread :" + e);
             }
             System.exit(0);
