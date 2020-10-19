@@ -25,6 +25,26 @@ public class WebServer {
     protected String contentPath = "src/HTTP/HTTP_server";
     protected Socket remote;
 
+    protected void sendHeaders(int status, String content_type){
+        String CRLF = "\r\n";
+        out.print("HTTP/1.1 ");
+        switch (status){
+            case 200:
+                out.print("200 OK" + CRLF);
+                break;
+            case 404:
+                out.print("404 NOT FOUND" + CRLF);
+                break;
+            default:
+                out.print("500 SERVER ERROR" + CRLF);
+                break;
+        }
+
+        out.print("Content-Type: " + content_type);
+
+        out.print(CRLF);
+    }
+
     protected void getResource(String resource) throws IOException {
 
         BufferedReader bufferedReader;
@@ -33,7 +53,7 @@ public class WebServer {
             bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
         } catch (FileNotFoundException e) {
             System.err.println("File not found: ." + resource);
-            out.println("HTTP/1.1 404 NOT FOUND\n");
+            out.println("HTTP/1.0 404 NOT FOUND\n");
             return;
         }
 
@@ -46,10 +66,19 @@ public class WebServer {
 
         switch (resource_type){
             case "html":
+                content_type = "text/html";
+                break;
+            case "txt":
+                content_type = "text/plain";
                 break;
             default:
-
+                content_type = "text/plain";
+                break;
         }
+
+        System.err.println("content : " + content_type);
+
+        sendHeaders(200, content_type);
 
         String line = bufferedReader.readLine();
         while (line != null) {
