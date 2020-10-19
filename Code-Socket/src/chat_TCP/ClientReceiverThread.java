@@ -3,23 +3,34 @@ package chat_TCP;
 
 import java.io.*;
 
+/**
+ * Classe implémentant le thread chargé de recevoir les messages du serveur.
+ * @author Emma Neiss, Yann Dupont
+ * @see ChatClient
+ * @see ClientIHM
+ */
 public class ClientReceiverThread extends Thread {
 
+    /**
+     * Flux entrant de la socket connectée au serveur.
+     */
     private BufferedReader socIn;
 
+    /**
+     * Constructeur de ClientReceiverThread, initialisant le thread (sans le démarrer).
+     * @param socIn     Flux entrant de la socket connectée au serveur
+     */
     ClientReceiverThread(BufferedReader socIn) {
         this.socIn = socIn;
     }
 
+    /**
+     * Démarre le thread de réception des messages.
+     */
     public void run(){
         try {
             while (true) {
                 String line = socIn.readLine();
-
-                // on verifie si on arrive a la fin de l'historique
-                //if(line.equals("Fin historique")){
-                //    continue;
-                //}
 
                 // Message de connexion d'un autre client
                 if(line.length() > 9 && line.substring(0, 9).equals("Connexion")){

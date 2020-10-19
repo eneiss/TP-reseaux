@@ -6,11 +6,29 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe principale du serveur de chat.
+ * Gère la connexion des clients et l'historique des messages.
+ * @author Emma Neiss, Yann Dupont
+ * @see ClientBoundThread
+ */
 public class ServerConnectionThread {
 
+    /**
+     * Nombre de clients connectés actuellement
+     */
     static private int totalUserNb;
+
+    /**
+     * Chemin vers le fichier texte contenant l'historique des messages
+     */
     static private String historyFilePath;
 
+    /**
+     * Main à exécuter pour démarrer le serveur de chat
+     * et autoriser les clients à se connecter.
+     * @param args      Contient le numéro de port (args[0])
+     */
     public static void main(String args[]){
 
         int port = 1235;
@@ -44,12 +62,23 @@ public class ServerConnectionThread {
         return totalUserNb;
     }
 
+    /**
+     * Persiste un message reçu par le serveur
+     * dans le fichier texte d'historique.
+     * @param line      Le message à persister, avec métadonnées
+     * @exception IOException si le fichier est inaccessible
+     */
     public static void writeToHistory(String line) throws IOException {
         FileWriter fw = new FileWriter(historyFilePath, true);
         fw.write(line + "\n");
         fw.close();
     }
 
+    /**
+     * Récupère tout l'historique des messages.
+     * @return      Une liste de messages sous forme de String, avec métadonnées
+     * @exception IOException en cas d'erreur à la lecture du fichier
+     */
     public static List<String> getHistory() throws IOException {
         List<String> hist = new ArrayList<String>();
         try(BufferedReader bufferedReader = new BufferedReader(new FileReader(historyFilePath))) {
