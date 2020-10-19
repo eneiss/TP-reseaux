@@ -28,7 +28,7 @@ public class WebServer {
     protected String contentPath = "src/HTTP/HTTP_server";
     protected Socket remote;
     protected int port;
-    protected String cwd = "./out/production/Code-Socket/HTTP/HTTP_server";
+    protected String cwd = "./src/HTTP/HTTP_server";
 
     protected void endResponse() {
         try{
