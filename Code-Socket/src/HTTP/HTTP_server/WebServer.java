@@ -110,17 +110,12 @@ public class WebServer {
 
         String line = bufferedReader.readLine();
         while (line != null) {
-            line = bufferedReader.readLine();
             out.println(line);
+            line = bufferedReader.readLine();
         }
 
         endResponse();
 
-//        try {
-//            endResponse();
-//        } catch (IOException e){
-//            e.printStackTrace();
-//        }
     }
 
     protected void handleGet(List<String> request) {
