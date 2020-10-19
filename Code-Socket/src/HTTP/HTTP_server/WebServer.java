@@ -225,9 +225,38 @@ public class WebServer {
     }
 
 
-    private void handlePost(List<String> request) {
+    private void handlePost(List<String> request, BufferedReader in) {
         // TODO
         System.err.println("POST request received");
+        int content_length = -1;
+        for (String line: request){
+//            System.err.println(line);
+            if (line.split(":")[0].equals("Content-Length")){
+                content_length = Integer.parseInt(line.split(": ")[1]);
+            }
+        }
+
+        // read request body (parameters)
+        try {
+            StringBuilder resultBuilder = new StringBuilder();
+            int count = 0;
+            int intch;
+            while (count < content_length && ((intch = in.read()) != -1)) {
+                resultBuilder.append((char) intch);
+//                System.err.print((char) intch);
+                count++;
+            }
+            String result = resultBuilder.toString();
+
+            sendHeaders(200, "text/plain");
+            out.println("Bonjour " + result.split("=")[1]);
+            endResponse();
+
+        } catch (IOException e){
+            e.printStackTrace();
+            sendHeaders(500);
+            endResponse();
+        }
     }
 
     private void handleDelete(List<String> request) {
@@ -236,13 +265,11 @@ public class WebServer {
         System.err.println("DELETE request on " + target);
 
         if (target.equals("/deleteme.txt")){
-            // todo passer en 200 et renvoyer une petite page ?
-            System.err.println("TODO delete file");
 
             File toDelete = new File(cwd + target);
             if (toDelete.delete()) {
                 System.err.println("Deleted the file: " + toDelete.getName());
-                sendHeaders(204);
+                sendHeaders(204);       // todo passer en 200 et renvoyer une petite page ?
                 endResponse();
             } else {
                 System.err.println("Failed to delete the file.");
@@ -299,7 +326,7 @@ public class WebServer {
                         handleGet(request);
                         break;
                     case "POST":
-                        handlePost(request);
+                        handlePost(request, in);
                         break;
                     case "DELETE":
                         handleDelete(request);
@@ -318,9 +345,9 @@ public class WebServer {
     }
 
     /**
-     * Start the application.
+     * Lance le serveur sur la machine locale.
      *
-     * @param args Command line parameters are not used.
+     * @param args Port utilisé par le serveur renseigné dans argv[0]
      */
     public static void main(String[] args) {
 
