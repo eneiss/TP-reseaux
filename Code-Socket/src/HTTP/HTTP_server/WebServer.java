@@ -3,9 +3,13 @@
 
 package HTTP.HTTP_server;
 
+import javax.imageio.IIOException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +29,54 @@ public class WebServer {
     protected String contentPath = "src/HTTP/HTTP_server";
     protected Socket remote;
     protected int port;
+    protected String cwd = "./src/HTTP/HTTP_server";
+    private static final int BUFFER_SIZE = 1024;
 
     protected void endResponse() {
         try{
             out.flush();
             remote.close();
+            System.err.println("> End of response");
         } catch (IOException exception){
             System.err.println("Exception caught while ending response");
             exception.printStackTrace();
         }
+    }
+
+    protected void notFound(){
+        sendHeaders(404, "text/html");
+        sendTextResource("/404.html");
+        endResponse();
+    }
+
+    protected void forbidden(){
+        sendHeaders(403, "text/html");
+        sendTextResource("/403.html");
+        endResponse();
+    }
+
+    protected void sendTextResource(String resource){
+        BufferedReader bufferedReader;
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                out.println(line);
+                line = bufferedReader.readLine();
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Resource not found: " + resource);
+        } catch (IOException e){
+            System.err.println("IOException while sending text resource");
+            e.printStackTrace();
+        }
+
+
+    }
+
+    protected void sendHeaders(int status){
+        sendHeaders(status, "text/html");
     }
 
     protected void sendHeaders(int status, String content_type){
@@ -48,6 +91,10 @@ public class WebServer {
                 out.print("200 OK" + CRLF);
                 System.err.print("200 OK" + CRLF);
                 break;
+            case 403:
+                out.print("403 FORBIDDEN" + CRLF);
+                System.err.print("403 FORBIDDEN" + CRLF);
+                break;
             case 404:
                 out.print("404 NOT_FOUND" + CRLF);
                 System.err.print("404 NOT_FOUND" + CRLF);
@@ -55,6 +102,10 @@ public class WebServer {
             case 400:
                 out.print("400 BAD_REQUEST" + CRLF);
                 System.err.print("400 BAD_REQUEST" + CRLF);
+                break;
+            case 204:
+                out.print("204 NO_CONTENT" + CRLF);
+                System.err.print("204 NO_CONTENT" + CRLF);
                 break;
             default:
                 out.print("500 SERVER_ERROR" + CRLF);
@@ -68,26 +119,18 @@ public class WebServer {
         out.print(CRLF);
         System.err.print(CRLF);
 
+        // debug may not work
+        out.flush();
+
     }
 
     protected void getResource(String resource) throws IOException {
 
-        BufferedReader bufferedReader;
-
-        try {
-            bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found: ." + resource);
-            sendHeaders(404, "text/html");
-            endResponse();
-            return;
-        }
-
-        // file found
-
+        // find resource type
         String[] split_resource = resource.split("\\.");
         String resource_type = split_resource[split_resource.length - 1];
         String content_type;
+        boolean isBinary = false;
 
         switch (resource_type){
             case "html":
@@ -98,21 +141,58 @@ public class WebServer {
                 break;
             case "png":
                 content_type = "image/png";
+                isBinary = true;
                 break;
             default:
                 content_type = "text/plain";
                 break;
         }
 
-        System.err.println("content : " + content_type);
+        if (isBinary){
 
-        sendHeaders(200, content_type);
+            try {
 
-        String line = bufferedReader.readLine();
-        while (line != null) {
-            out.println(line);
-            line = bufferedReader.readLine();
-        }
+                File file = new File(cwd + resource);
+                System.err.println("requested binary file path : " + file.toPath().toString());
+
+                if(file.isFile()) {
+                    sendHeaders(200, content_type);
+                    Files.copy(file.toPath(), remote.getOutputStream());
+                } else {    // file not found
+                    System.err.println("Binary file not found : " + resource);
+                    notFound();
+                    return;
+                }
+
+            } catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
+        } else {        // non-binary content
+
+            BufferedReader bufferedReader;
+
+            try {
+                bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
+            } catch (FileNotFoundException e) {
+                System.err.println("File not found: ." + resource);
+                notFound();
+                return;
+            }
+
+            // file found
+
+            System.err.println("content : " + content_type);
+
+            sendHeaders(200, content_type);
+
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                out.println(line);
+                line = bufferedReader.readLine();
+            }
+
+        }       // resource not binary
 
         endResponse();
 
@@ -151,8 +231,20 @@ public class WebServer {
     }
 
     private void handleDelete(List<String> request) {
-        // TODO
-        System.err.println("DELETE request received");
+
+        String target = request.get(0).split(" ", 3)[1];
+        System.err.println("DELETE request on " + target);
+
+        if (target.equals("/deleteme.txt")){
+            // todo
+            // fixme passer en 200 et renvoyer une petite page ?
+            System.err.println("TODO delete file");
+            sendHeaders(204);
+            endResponse();
+        }else{
+            forbidden();
+        }
+
     }
 
     /**
