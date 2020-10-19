@@ -24,25 +24,36 @@ public class WebServer {
     protected PrintWriter out;
     protected String contentPath = "src/HTTP/HTTP_server";
     protected Socket remote;
+    protected int port;
 
     protected void sendHeaders(int status, String content_type){
+
         String CRLF = "\r\n";
-        out.print("HTTP/1.1 ");
+        out.print("HTTP/1.0 ");
+
+        System.err.println("========== DEBUG OUTPUT ==========");
+        System.err.print("HTTP/1.0 ");
+
         switch (status){
             case 200:
                 out.print("200 OK" + CRLF);
+                System.err.print("200 OK" + CRLF);
                 break;
             case 404:
-                out.print("404 NOT FOUND" + CRLF);
+                out.print("404 NOT_FOUND" + CRLF);
+                System.err.print("404 NOT FOUND" + CRLF);
                 break;
             default:
-                out.print("500 SERVER ERROR" + CRLF);
+                out.print("500 SERVER_ERROR" + CRLF);
+                System.err.print("500 SERVER ERROR" + CRLF);
                 break;
         }
 
-        out.print("Content-Type: " + content_type);
+        out.print("Content-Type: " + content_type + CRLF);
+        System.err.print("Content-Type: " + content_type + CRLF);
 
         out.print(CRLF);
+        System.err.print(CRLF);
     }
 
     protected void getResource(String resource) throws IOException {
@@ -53,7 +64,9 @@ public class WebServer {
             bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
         } catch (FileNotFoundException e) {
             System.err.println("File not found: ." + resource);
-            out.println("HTTP/1.0 404 NOT FOUND\n");
+            sendHeaders(404, "text/html");
+            out.flush();
+            remote.close();
             return;
         }
 
@@ -85,6 +98,9 @@ public class WebServer {
             line = bufferedReader.readLine();
             out.println(line);
         }
+
+        out.flush();
+        remote.close();
     }
 
     protected void handleGet(List<String> request) {
@@ -116,16 +132,18 @@ public class WebServer {
     /**
      * WebServer constructor.
      */
-    protected void start() {
+    protected void start(int port) {
         ServerSocket s;
+        this.port = port;
 
-        System.out.println("Webserver starting up on port 3000");
+        System.out.println("Webserver starting up on port " + Integer.toString(port));
         System.out.println("(press ctrl-c to exit)");
         try {
             // create the main server socket
-            s = new ServerSocket(3000);
+            s = new ServerSocket(port);
         } catch (Exception e) {
             System.out.println("Error: " + e);
+            e.printStackTrace();
             return;
         }
 
@@ -167,7 +185,13 @@ public class WebServer {
      * @param args Command line parameters are not used.
      */
     public static void main(String[] args) {
+
+        if (args.length != 1) {
+            System.out.println("Usage: java WebServer <WebServer port>");
+            System.exit(1);
+        }
+
         WebServer ws = new WebServer();
-        ws.start();
+        ws.start(Integer.parseInt(args[0]));
     }
 }
