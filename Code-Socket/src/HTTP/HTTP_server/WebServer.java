@@ -43,6 +43,32 @@ public class WebServer {
         }
     }
 
+    protected void notFound(){
+        sendHeaders(404, "text/html");
+        sendTextResource("/404.html");
+        endResponse();
+    }
+
+    protected void sendTextResource(String resource){
+        BufferedReader bufferedReader;
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                out.println(line);
+                line = bufferedReader.readLine();
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Resource not found: " + resource);
+        } catch (IOException e){
+            System.err.println("IOException while sending text resource");
+            e.printStackTrace();
+        }
+
+
+    }
+
     protected void sendHeaders(int status){
         sendHeaders(status, "text/html");
     }
@@ -111,57 +137,20 @@ public class WebServer {
         if (isBinary){
 
             try {
-                // version d'alex
-//                File file = new File(cwd + resource);
-//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-//
-//                byte[] buffer = new byte[BUFFER_SIZE];
-//                int data;
-//
-//                // send headers since the file was opened successfully
-//                sendHeaders(200, content_type);
-//
-//                // read file data
-//                while ((data = bis.read(buffer)) > 0) {
-//                    baos.write(buffer, 0, data);
-//                }
-//                baos.flush();
-//
-//                byte[] bytes = baos.toByteArray();
-//                baos.close();
-//                remote.getOutputStream().write(bytes);
-//
-//            } catch (IIOException iioe) {
-//                System.err.println("IIOException while opening requested file");
-//                iioe.printStackTrace();
-//                sendHeaders(404);
-//            } catch (Exception e){
-//                e.printStackTrace();
-//                sendHeaders(404);
-//            }
 
-
-//                 -------- OLD
                 File file = new File(cwd + resource);
                 System.err.println("requested binary file path : " + file.toPath().toString());
-
-//                 debug
-//                System.err.println("--- Working Directory = " + System.getProperty("user.dir"));
-//                File test_file = new File("./out/production/Code-Socket/HTTP/HTTP_server/example.html");
-//                if (test_file.isFile()){
-//                    System.err.println("Test file exists");
-//                } else {
-//                    System.err.println("!!! Test file does NOT exist ! :(");
-//                }
 
                 if(file.isFile()) {
                     sendHeaders(200, content_type);
                     Files.copy(file.toPath(), remote.getOutputStream());
                 } else {    // file not found
                     System.err.println("Binary file not found : " + resource);
-                    sendHeaders(404);
+//                    sendHeaders(404);
+                    notFound();
+                    return;
                 }
+
             } catch (NullPointerException e){
                 e.printStackTrace();
             }
@@ -174,8 +163,7 @@ public class WebServer {
                 bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
             } catch (FileNotFoundException e) {
                 System.err.println("File not found: ." + resource);
-                sendHeaders(404);
-                endResponse();
+                notFound();
                 return;
             }
 
