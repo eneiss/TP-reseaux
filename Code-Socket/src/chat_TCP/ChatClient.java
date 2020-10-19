@@ -86,7 +86,6 @@ public class ChatClient {
 
     public static void disconnect(){
         socOut.println("Deconnexion");
-        System.out.println("bye");
         try {
             ct.interrupt();
             socOut.close();
@@ -96,8 +95,6 @@ public class ChatClient {
         } catch(Exception e){
             System.out.println("Erreur lors de la fermeture des sockets");
         }
-        window.dispose();
-        System.exit(0);
     }
 
 }

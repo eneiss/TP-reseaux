@@ -53,10 +53,9 @@ public class ClientReceiverThread extends Thread {
 
             }
         } catch (Exception e) {
-            ChatClient.disconnect();
-            //if(!e.getMessage().equals("Socket closed")) {
+            if(!e.getMessage().equals("Socket closed")) {
                 System.err.println("Error in ClientReceiverThread :" + e);
-            //}
+            }
             System.exit(0);
         }
     }

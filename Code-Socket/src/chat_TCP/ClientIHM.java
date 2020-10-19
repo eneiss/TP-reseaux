@@ -21,9 +21,8 @@ public class ClientIHM extends Frame implements ActionListener {
         setResizable(false);
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent){
+                ChatClient.disconnect();
                 System.exit(0);
-                //System.out.println("allo");
-                //ChatClient.disconnect();
             }
         });
 
