@@ -204,16 +204,9 @@ public class WebServer {
         System.err.println("GET request on " + target);
 
         try {
-            if (target.equals("/")){    // main dummy page
-                // Send the response
-                // Send the headers
-                out.println("HTTP/1.0 200 OK");
-                out.println("Content-Type: text/html");
-                out.println("Server: Bot");
-                // this blank line signals the end of the headers
-                out.println("");
-                // Send the HTML page
-                out.println("<h1>Welcome to the Ultra Mini-WebServer</h1>");
+            if (target.equals("/")){    // main page
+                sendHeaders(200);
+                sendTextResource("/index.html");
 
                 endResponse();
             } else {
