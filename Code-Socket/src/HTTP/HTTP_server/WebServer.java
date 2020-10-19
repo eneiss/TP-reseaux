@@ -49,6 +49,12 @@ public class WebServer {
         endResponse();
     }
 
+    protected void forbidden(){
+        sendHeaders(403, "text/html");
+        sendTextResource("/403.html");
+        endResponse();
+    }
+
     protected void sendTextResource(String resource){
         BufferedReader bufferedReader;
 
@@ -69,9 +75,6 @@ public class WebServer {
 
     }
 
-    protected void sendHeaders(int status){
-        sendHeaders(status, "text/html");
-    }
 
     protected void sendHeaders(int status, String content_type){
 
@@ -84,6 +87,10 @@ public class WebServer {
             case 200:
                 out.print("200 OK" + CRLF);
                 System.err.print("200 OK" + CRLF);
+                break;
+            case 403:
+                out.print("403 FORBIDDEN" + CRLF);
+                System.err.print("403 FORBIDDEN" + CRLF);
                 break;
             case 404:
                 out.print("404 NOT_FOUND" + CRLF);
@@ -218,8 +225,17 @@ public class WebServer {
     }
 
     private void handleDelete(List<String> request) {
-        // TODO
-        System.err.println("DELETE request received");
+
+        String target = request.get(0).split(" ", 3)[1];
+        System.err.println("DELETE request on " + target);
+
+        if (target.equals("/deleteme.txt")){
+            // todo
+            System.err.println("TODO delete file");
+        }else{
+            forbidden();
+        }
+
     }
 
     /**
