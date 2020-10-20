@@ -34,7 +34,7 @@ public class WebServer {
         try{
             out.flush();
             remote.close();
-            System.err.println("> End of response");
+//            System.err.println("> End of response");
         } catch (IOException exception){
             System.err.println("Exception caught while ending response");
             exception.printStackTrace();
@@ -80,44 +80,43 @@ public class WebServer {
     protected void sendHeaders(int status, String content_type){
 
         String CRLF = "\r\n";
-        System.err.println("========== RESPONSE SENT ==========");
+//        System.err.println("========== RESPONSE SENT ==========");
         out.print("HTTP/1.0 ");
-        System.err.print("HTTP/1.0 ");
+//        System.err.print("HTTP/1.0 ");
 
         switch (status){
             case 200:
                 out.print("200 OK" + CRLF);
-                System.err.print("200 OK" + CRLF);
+//                System.err.print("200 OK" + CRLF);
                 break;
             case 403:
                 out.print("403 FORBIDDEN" + CRLF);
-                System.err.print("403 FORBIDDEN" + CRLF);
+//                System.err.print("403 FORBIDDEN" + CRLF);
                 break;
             case 404:
                 out.print("404 NOT_FOUND" + CRLF);
-                System.err.print("404 NOT_FOUND" + CRLF);
+//                System.err.print("404 NOT_FOUND" + CRLF);
                 break;
             case 400:
                 out.print("400 BAD_REQUEST" + CRLF);
-                System.err.print("400 BAD_REQUEST" + CRLF);
+//                System.err.print("400 BAD_REQUEST" + CRLF);
                 break;
             case 204:
                 out.print("204 NO_CONTENT" + CRLF);
-                System.err.print("204 NO_CONTENT" + CRLF);
+//                System.err.print("204 NO_CONTENT" + CRLF);
                 break;
             default:
                 out.print("500 SERVER_ERROR" + CRLF);
-                System.err.print("500 SERVER_ERROR" + CRLF);
+//                System.err.print("500 SERVER_ERROR" + CRLF);
                 break;
         }
 
         out.print("Content-Type: " + content_type + CRLF);
-        System.err.print("Content-Type: " + content_type + CRLF);
+//        System.err.print("Content-Type: " + content_type + CRLF);
 
         out.print(CRLF);
-        System.err.print(CRLF);
+//        System.err.print(CRLF);
 
-        // debug may not work
         out.flush();
 
     }
@@ -156,13 +155,13 @@ public class WebServer {
         try {
 
             File file = new File(cwd + resource);
-            System.err.println("requested binary file path : " + file.toPath().toString());
+//            System.err.println("requested file path : " + file.toPath().toString());
 
             if(file.isFile()) {
                 sendHeaders(200, content_type);
                 Files.copy(file.toPath(), remote.getOutputStream());
             } else {    // file not found
-                System.err.println("Binary file not found : " + resource);
+                System.err.println("File not found : " + resource);
                 notFound();
                 return;
             }
@@ -269,14 +268,13 @@ public class WebServer {
             return;
         }
 
-        System.out.println("Waiting for connection");
+        System.out.println("Waiting for connection...\n");
         for (; ; ) {
             try {
 
                 // wait for a connection
                 remote = s.accept();
                 // remote is now the connected socket
-                System.out.println("Connection, sending data.");
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         remote.getInputStream()));
                 out = new PrintWriter(remote.getOutputStream());
@@ -307,9 +305,8 @@ public class WebServer {
                         break;
                 }
 
-
             } catch (Exception e) {
-                System.out.println("Error: " + e);
+                System.out.println("Error occurred in main loop: " + e);
             }
         }
     }
