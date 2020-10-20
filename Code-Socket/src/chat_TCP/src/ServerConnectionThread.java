@@ -28,6 +28,7 @@ public class ServerConnectionThread {
      * Main à exécuter pour démarrer le serveur de chat
      * et autoriser les clients à se connecter.
      * @param args      Contient le numéro de port (args[0])
+     *                  TODO
      */
     public static void main(String args[]){
 

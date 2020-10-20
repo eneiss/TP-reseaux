@@ -12,24 +12,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Example program from Chapter 1 Programming Spiders, Bots and Aggregators in
- * Java Copyright 2001 by Jeff Heaton
+ * Serveur HTTP basé sur l'exemple de "Chapter 1 Programming Spiders, Bots and
+ * Aggregators in Java", Copyright 2001 by Jeff Heaton
  * <p>
- * WebServer is a very simple web-server. Any request is responded with a very
- * simple web-page.
+ *     Ce serveur répond aux requêtes GET, POST et DELETE conformément au
+ *     standard HTTP.
  *
- * @author Jeff Heaton
- * @version 1.0
+ * @author Yann Dupont, Emma Neiss
  */
 public class WebServer {
 
+    /**
+    * PrintWriter pour répondre au client connecté
+    * */
     protected PrintWriter out;
-    protected String contentPath = "src/HTTP/HTTP_server/doc";
-    protected Socket remote;
-    protected int port;
-    protected String cwd = "./src/HTTP/HTTP_server/doc";
-    private static final int BUFFER_SIZE = 1024;
 
+    /**
+     * Socket connectée au client
+     * */
+    protected Socket remote;
+
+    /**
+     * Port sur lequel le serveur écoute les requêtes
+     * */
+    protected int port;
+
+    /**
+     * Chemin d'accès relatif aux ressources disponibles via GET
+     * */
+    protected String resource_path = "./src/HTTP/HTTP_server/doc";
+
+    /**
+     * Met fin à la réponse du serveur et à la connexion avec le client
+     * */
     protected void endResponse() {
         try {
             out.flush();
@@ -41,23 +56,37 @@ public class WebServer {
         }
     }
 
+    /**
+     * Envoie une réponse au client en cas de ressource non trouvée sur le
+     * serveur (erreur 404)
+     * */
     protected void notFound() {
         sendHeaders(404, "text/html");
         sendTextResource("/404.html");
         endResponse();
     }
 
+    /**
+     * Envoie une réponse au client en cas de requête non autorisée (erreur 403)
+     * */
     protected void forbidden() {
         sendHeaders(403, "text/html");
         sendTextResource("/403.html");
         endResponse();
     }
 
+    /**
+    * Envoie au client le contenu d'une ressource textuelle (comme un fichier
+     * HTML)
+     *
+     * @param resource Le chemin d'accès à la ressource demandée (relatif par
+     *                 rapport au dossier racine des ressouces)
+     * */
     protected void sendTextResource(String resource) {
         BufferedReader bufferedReader;
 
         try {
-            bufferedReader = new BufferedReader(new FileReader(contentPath + resource));
+            bufferedReader = new BufferedReader(new FileReader(resource_path + resource));
             String line = bufferedReader.readLine();
             while (line != null) {
                 out.println(line);
@@ -69,14 +98,26 @@ public class WebServer {
             System.err.println("IOException while sending text resource");
             e.printStackTrace();
         }
-
-
     }
 
+    /**
+     * Envoie au client l'en-tête de la réponse du serveur pour une ressource
+     * HTML
+     *
+     * @param status Le code correspondant au statut de la réponse (ex: 404)
+     * @see WebServer#sendHeaders(int, String)
+     * */
     protected void sendHeaders(int status) {
         sendHeaders(status, "text/html");
     }
 
+    /**
+     * Envoie au client l'en-tête de la réponse du serveur dans le cas général,
+     *
+     * @param status Le code correspondant au statut de la réponse (ex: 404)
+     * @param content_type Le type MIME du contenu envoyé dans le corps de la
+     *                     réponse HTTP
+     * */
     protected void sendHeaders(int status, String content_type) {
 
         String CRLF = "\r\n";
@@ -121,6 +162,8 @@ public class WebServer {
 
     }
 
+    /** TODO (cf autre @param resouce pour le texte)
+     * @param resource Le chemin*/
     protected void getResource(String resource) throws IOException {
 
         // find resource type
@@ -154,7 +197,7 @@ public class WebServer {
 
         try {
 
-            File file = new File(cwd + resource);
+            File file = new File(resource_path + resource);
 //            System.err.println("requested file path : " + file.toPath().toString());
 
             if (file.isFile()) {
@@ -235,7 +278,7 @@ public class WebServer {
 
         if (target.equals("/deleteme.txt")) {
 
-            File toDelete = new File(cwd + target);
+            File toDelete = new File(resource_path + target);
             if (toDelete.delete()) {
                 System.err.println("Deleted the file: " + toDelete.getName());
                 sendHeaders(204);       // todo passer en 200 et renvoyer une petite page ?
