@@ -3,13 +3,11 @@
 
 package HTTP.HTTP_server;
 
-import javax.imageio.IIOException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,6 +144,9 @@ public class WebServer {
                 break;
             case "pdf":
                 content_type = "application/pdf";
+                break;
+            case "js":
+                content_type = "text/javascript";
                 break;
             default:
                 content_type = "text/plain";
