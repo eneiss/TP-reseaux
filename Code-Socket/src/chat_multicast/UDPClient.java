@@ -33,7 +33,7 @@ public class UDPClient {
 
             stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-            sendMessage("Bonjour, test");   // debug
+//            sendMessage("Bonjour, test");   // debug
             runLoop();
 
             socket.leaveGroup(groupAddr);
