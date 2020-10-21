@@ -93,7 +93,7 @@ public class ClientBoundThread extends Thread {
             clientSocket.close();
 
         } catch (Exception e) {
-            System.err.println("Error in EchoServer:" + e);
+            System.err.println("Error in ClientBoundThread:" + e);
         }
     }
 }

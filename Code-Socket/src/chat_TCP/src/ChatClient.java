@@ -51,8 +51,10 @@ public class ChatClient {
      */
     public static void main(String[] args) throws IOException {
 
-        int port = 1235;
-        String host = "localhost"; // c'est le localhost;
+        if (args.length != 2) {
+            System.out.println("Usage: java ChatClient <EchoServer host> <EchoServer port>");
+            System.exit(1);
+        }
 
         // connexion au serveur
         try {
@@ -61,10 +63,10 @@ public class ChatClient {
             socOut = new PrintStream(echoSocket.getOutputStream());
             stdIn = new BufferedReader(new InputStreamReader(System.in));
         } catch (UnknownHostException e) {
-            System.err.println("Don't know about host:" + host);
+            System.err.println("Don't know about host:" + args[0]);
             System.exit(1);
         } catch (IOException e) {
-            System.err.println("Couldn't get I/O for the connection to:"+ port);
+            System.err.println("Couldn't get I/O for the connection to port:" + args[1]);
             System.exit(1);
         }
 
