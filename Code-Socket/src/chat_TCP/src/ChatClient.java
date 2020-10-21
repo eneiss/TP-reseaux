@@ -46,7 +46,7 @@ public class ChatClient {
 
     /**
      * Main à executer pour lancer le client et se connecter au système de chat.
-     * @param args      Contient le port auquel se connecter (args[0]), et l'hôte auquel se connecter (args[1])
+     * @param args      Contient l'hôte auquel se connecter (args[0]), et le port auquel se connecter (args[1])
      * @exception IOException si il y a eu une erreur lors de la connection au serveur
      */
     public static void main(String[] args) throws IOException {
@@ -56,7 +56,7 @@ public class ChatClient {
 
         // connexion au serveur
         try {
-            echoSocket = new Socket(host, port);
+            echoSocket = new Socket(args[0], Integer.parseInt(args[1]));
             socIn = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
             socOut = new PrintStream(echoSocket.getOutputStream());
             stdIn = new BufferedReader(new InputStreamReader(System.in));

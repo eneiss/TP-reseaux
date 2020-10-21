@@ -28,7 +28,6 @@ public class ServerConnectionThread {
      * Main à exécuter pour démarrer le serveur de chat
      * et autoriser les clients à se connecter.
      * @param args      Contient le numéro de port (args[0])
-     *                  TODO
      */
     public static void main(String args[]){
 
@@ -40,7 +39,7 @@ public class ServerConnectionThread {
         List<PrintStream> allClientsSockets = new ArrayList<PrintStream>();
 
         try {
-            listenSocket = new ServerSocket(port);
+            listenSocket = new ServerSocket(Integer.parseInt(args[0]));
             System.out.println("Server ready...");
             while (true) {
                 Socket clientSocket = listenSocket.accept(); // bloque jusqu'à ce qu'on ait une demande de connexion
