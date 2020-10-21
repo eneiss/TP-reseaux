@@ -264,7 +264,7 @@ public class WebServer {
             String result = resultBuilder.toString();
 
             sendHeaders(200, "text/plain");
-            out.println("Bonjour " + result.split("=")[1]);
+            out.println("Hello " + result.split("=")[1]);
             endResponse();
 
         } catch (IOException e) {
