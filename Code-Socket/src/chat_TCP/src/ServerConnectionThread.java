@@ -31,7 +31,10 @@ public class ServerConnectionThread {
      */
     public static void main(String args[]){
 
-        int port = 1235;
+        if (args.length != 1) {
+            System.out.println("Usage: java ServerConnectionThread <EchoServer port>");
+            System.exit(1);
+        }
 
         historyFilePath = System.getProperty("user.dir") + "/history.txt";
 
@@ -49,7 +52,7 @@ public class ServerConnectionThread {
                 ct.start();
             }
         } catch (Exception e) {
-            System.err.println("Error in EchoServer:" + e);
+            System.err.println("Error in ServerConnectionThread:" + e);
         }
     }
 
