@@ -1,0 +1,9 @@
+h2 {
+    text-align: center;
+}
+
+#lorem-ipsum {
+    color: cornflowerblue;
+    font-style: italic;
+    font-family: 'Roboto', sans-serif;
+}

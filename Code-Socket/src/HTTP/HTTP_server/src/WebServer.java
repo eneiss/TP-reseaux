@@ -190,6 +190,9 @@ public class WebServer {
             case "js":
                 content_type = "text/javascript";
                 break;
+            case "css":
+                content_type = "text/css";
+                break;
             default:
                 content_type = "text/plain";
                 break;
