@@ -217,7 +217,8 @@ public class WebServer {
      * Traite la requête GET passée en paramètre en la parsant et en répondant
      * à cette requête
      *
-     * @param request Les lignes de la requête reçue, sous forme de List<String>
+     * @param request Les lignes de la requête reçue, sous forme de List de
+     *                String
      * @see WebServer#handlePost(List, BufferedReader)
      * @see WebServer#handleDelete(List)
      */
