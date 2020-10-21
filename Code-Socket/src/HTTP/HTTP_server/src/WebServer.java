@@ -13,36 +13,36 @@ import java.util.List;
  * Serveur HTTP basé sur l'exemple de "Chapter 1 Programming Spiders, Bots and
  * Aggregators in Java", Copyright 2001 by Jeff Heaton
  * <p>
- *     Ce serveur répond aux requêtes GET, POST et DELETE conformément au
- *     standard HTTP.
+ * Ce serveur répond aux requêtes GET, POST et DELETE conformément au
+ * standard HTTP.
  *
  * @author Yann Dupont, Emma Neiss
  */
 public class WebServer {
 
     /**
-    * PrintWriter pour répondre au client connecté
-    * */
+     * PrintWriter pour répondre au client connecté
+     */
     protected PrintWriter out;
 
     /**
      * Socket connectée au client
-     * */
+     */
     protected Socket remote;
 
     /**
      * Port sur lequel le serveur écoute les requêtes
-     * */
+     */
     protected int port;
 
     /**
      * Chemin d'accès relatif aux ressources disponibles via GET
-     * */
+     */
     protected String resource_path = "./src/HTTP/HTTP_server/doc";
 
     /**
      * Met fin à la réponse du serveur et à la connexion avec le client
-     * */
+     */
     protected void endResponse() {
         try {
             out.flush();
@@ -56,7 +56,7 @@ public class WebServer {
     /**
      * Envoie une réponse au client en cas de ressource non trouvée sur le
      * serveur (erreur 404)
-     * */
+     */
     protected void notFound() {
         sendHeaders(404, "text/html");
         sendTextResource("/404.html");
@@ -65,7 +65,7 @@ public class WebServer {
 
     /**
      * Envoie une réponse au client en cas de requête non autorisée (erreur 403)
-     * */
+     */
     protected void forbidden() {
         sendHeaders(403, "text/html");
         sendTextResource("/403.html");
@@ -73,12 +73,12 @@ public class WebServer {
     }
 
     /**
-    * Envoie au client le contenu d'une ressource textuelle (comme un fichier
+     * Envoie au client le contenu d'une ressource textuelle (comme un fichier
      * HTML)
      *
      * @param resource Le chemin d'accès à la ressource demandée (relatif par
      *                 rapport au dossier racine des ressources)
-     * */
+     */
     protected void sendTextResource(String resource) {
         BufferedReader bufferedReader;
 
@@ -103,7 +103,7 @@ public class WebServer {
      *
      * @param status Le code correspondant au statut de la réponse (ex: 404)
      * @see WebServer#sendHeaders(int, String)
-     * */
+     */
     protected void sendHeaders(int status) {
         sendHeaders(status, "text/html");
     }
@@ -111,10 +111,10 @@ public class WebServer {
     /**
      * Envoie au client l'en-tête de la réponse du serveur dans le cas général,
      *
-     * @param status Le code correspondant au statut de la réponse (ex: 404)
+     * @param status       Le code correspondant au statut de la réponse (ex: 404)
      * @param content_type Le type MIME du contenu envoyé dans le corps de la
      *                     réponse HTTP
-     * */
+     */
     protected void sendHeaders(int status, String content_type) {
 
         String CRLF = "\r\n";
@@ -154,10 +154,10 @@ public class WebServer {
      * puis met fin à la connexion
      *
      * @param resource Le chemin d'accès à la ressource demandée (relatif par
-     *              rapport au dossier racine des ressources)
+     *                 rapport au dossier racine des ressources)
      * @throws IOException Lève une IOException en cas de problème d'écriture
-     * sur la sortie de la socket liée au client.
-     * */
+     *                     sur la sortie de la socket liée au client.
+     */
     protected void getResource(String resource) throws IOException {
 
         // find resource type
@@ -214,13 +214,13 @@ public class WebServer {
     }
 
     /**
-    * Traite la requête GET passée en paramètre en la parsant et en répondant
-    * à cette requête
-    *
-    * @param request Les lignes de la requête reçue, sous forme de List<String>
-    * @see WebServer#handlePost(List, BufferedReader)
-    * @see WebServer#handleDelete(List) 
-    * */
+     * Traite la requête GET passée en paramètre en la parsant et en répondant
+     * à cette requête
+     *
+     * @param request Les lignes de la requête reçue, sous forme de List<String>
+     * @see WebServer#handlePost(List, BufferedReader)
+     * @see WebServer#handleDelete(List)
+     */
     protected void handleGet(List<String> request) {
 
         String target = request.get(0).split(" ", 3)[1];
@@ -245,11 +245,11 @@ public class WebServer {
      * éventuellement à cette requête
      *
      * @param request Les lignes de la requête reçue, sous forme de List<String>
-     * @param in Le BufferedReader depuis lequel on lit le corps de la requête
-     *           client
+     * @param in      Le BufferedReader depuis lequel on lit le corps de la requête
+     *                client
      * @see WebServer#handleGet(List)
      * @see WebServer#handleDelete(List)
-     * */
+     */
     private void handlePost(List<String> request, BufferedReader in) {
         System.err.println("POST request received");
         int content_length = -1;
@@ -284,11 +284,11 @@ public class WebServer {
     /**
      * Traite la requête DELETE passée en paramètre en la parsant et en répondant
      * à cette requête
-     * 
+     *
      * @param request Les lignes de la requête reçue, sous forme de List<String>
-     * @see WebServer#handleGet(List) 
+     * @see WebServer#handleGet(List)
      * @see WebServer#handleDelete(List)
-     * */
+     */
     private void handleDelete(List<String> request) {
 
         String target = request.get(0).split(" ", 3)[1];
