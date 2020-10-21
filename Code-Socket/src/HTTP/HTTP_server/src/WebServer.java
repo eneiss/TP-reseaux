@@ -80,7 +80,7 @@ public class WebServer {
      * HTML)
      *
      * @param resource Le chemin d'accès à la ressource demandée (relatif par
-     *                 rapport au dossier racine des ressouces)
+     *                 rapport au dossier racine des ressources)
      * */
     protected void sendTextResource(String resource) {
         BufferedReader bufferedReader;
@@ -162,8 +162,15 @@ public class WebServer {
 
     }
 
-    /** TODO (cf autre @param resouce pour le texte)
-     * @param resource Le chemin*/
+    /**
+     * Envoie la ressource demandée au client dans le corps de la réponse HTTP,
+     * puis met fin à la connexion
+     *
+     * @param resource Le chemin d'accès à la ressource demandée (relatif par
+     *              rapport au dossier racine des ressources)
+     * @throws IOException Lève une IOException en cas de problème d'écriture
+     * sur la sortie de la socket liée au client.
+     * */
     protected void getResource(String resource) throws IOException {
 
         // find resource type
@@ -220,6 +227,14 @@ public class WebServer {
 
     }
 
+    /**
+    * Traite la requête GET passée en paramètre en la parsant et en répondant
+    * à cette requête
+    *
+    * @param request Les lignes de la requête reçue, sous forme de List<String>
+    * @see WebServer#handlePost(List, BufferedReader)
+    * @see WebServer#handleDelete(List) 
+    * */
     protected void handleGet(List<String> request) {
 
         String target = request.get(0).split(" ", 3)[1];
@@ -239,13 +254,20 @@ public class WebServer {
         }
     }
 
-
+    /**
+     * Traite la requête POST passée en paramètre en la parsant et en répondant
+     * éventuellement à cette requête
+     *
+     * @param request Les lignes de la requête reçue, sous forme de List<String>
+     * @param in Le BufferedReader depuis lequel on lit le corps de la requête
+     *           client
+     * @see WebServer#handleGet(List)
+     * @see WebServer#handleDelete(List)
+     * */
     private void handlePost(List<String> request, BufferedReader in) {
-        // TODO
         System.err.println("POST request received");
         int content_length = -1;
         for (String line : request) {
-//            System.err.println(line);
             if (line.split(":")[0].equals("Content-Length")) {
                 content_length = Integer.parseInt(line.split(": ")[1]);
             }
@@ -258,7 +280,6 @@ public class WebServer {
             int intch;
             while (count < content_length && ((intch = in.read()) != -1)) {
                 resultBuilder.append((char) intch);
-//                System.err.print((char) intch);
                 count++;
             }
             String result = resultBuilder.toString();
@@ -274,6 +295,14 @@ public class WebServer {
         }
     }
 
+    /**
+     * Traite la requête DELETE passée en paramètre en la parsant et en répondant
+     * à cette requête
+     * 
+     * @param request Les lignes de la requête reçue, sous forme de List<String>
+     * @see WebServer#handleGet(List) 
+     * @see WebServer#handleDelete(List)
+     * */
     private void handleDelete(List<String> request) {
 
         String target = request.get(0).split(" ", 3)[1];
@@ -297,7 +326,9 @@ public class WebServer {
     }
 
     /**
-     * WebServer constructor.
+     * Constructeur du WebServer.
+     *
+     * @param port Le port sur lequel le serveur écoutera les requêtes HTTP
      */
     protected void start(int port) {
         ServerSocket s;
@@ -361,6 +392,7 @@ public class WebServer {
      * Lance le serveur sur la machine locale.
      *
      * @param args Port utilisé par le serveur renseigné dans argv[0]
+     * @see WebServer#start(int) 
      */
     public static void main(String[] args) {
 
