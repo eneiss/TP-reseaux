@@ -253,7 +253,8 @@ public class WebServer {
 
             } catch (IOException e) {
 
-                System.err.println("Error while trying to run target resource: " + resource);
+                System.err.println("Error while trying to run target resource: " + resource); 
+		e.printStackTrace();
                 notFound();
                 return;
             } catch (ArrayIndexOutOfBoundsException e){
