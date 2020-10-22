@@ -42,6 +42,12 @@ public class WebServer {
     protected String resource_path = "./src/HTTP/HTTP_server/doc/resources";
 
     /**
+     * Nom de la commande utilisée pour exécuter un script Python.
+     * Vaut "python" sous Windows, et "python3" sous Linux.
+     */
+    protected String python_cli_name = "python";
+
+    /**
      * Met fin à la réponse du serveur et à la connexion avec le client
      */
     protected void endResponse() {
@@ -164,7 +170,7 @@ public class WebServer {
         List<String> output = new ArrayList<>();
 
         String res;
-        StringBuilder command = new StringBuilder("python ");
+        StringBuilder command = new StringBuilder(python_cli_name + " ");
         command.append(resource_path);
         command.append(file);
         for (String arg : args) {
@@ -253,11 +259,12 @@ public class WebServer {
 
             } catch (IOException e) {
 
-                System.err.println("Error while trying to run target resource: " + resource); 
-		e.printStackTrace();
+                System.err.println("Error while trying to run target resource: " + resource);
+                e.printStackTrace();
                 notFound();
                 return;
-            } catch (ArrayIndexOutOfBoundsException e){
+
+            } catch (ArrayIndexOutOfBoundsException e) {
                 sendHeaders(400);
                 out.write("Error, please fill in the required script parameters.");
             }
@@ -397,13 +404,10 @@ public class WebServer {
         System.out.println("Webserver starting up on port " + Integer.toString(port));
         System.out.println("(press ctrl-c to exit)");
 
-        // debug
-        System.err.println("Working Directory = " + System.getProperty("user.dir"));
         String[] cwd_path = System.getProperty("user.dir").split("/");
-
-	System.err.println("cwd path last elem:" + cwd_path[cwd_path.length - 1]);
         if (cwd_path[cwd_path.length - 1].equals("HTTP_server")) {  // Linux cwd
             resource_path = "./doc/resources";
+            python_cli_name = "python3";
         }
 
         try {
