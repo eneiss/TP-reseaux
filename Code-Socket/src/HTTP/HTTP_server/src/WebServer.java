@@ -38,7 +38,7 @@ public class WebServer {
     /**
      * Chemin d'accès relatif aux ressources disponibles via GET
      */
-    protected String resource_path = "./src/HTTP/HTTP_server/doc";
+    protected String resource_path = "./src/HTTP/HTTP_server/doc/resources";
 
     /**
      * Met fin à la réponse du serveur et à la connexion avec le client
@@ -260,7 +260,7 @@ public class WebServer {
                 out.write("Error, please fill in the required script parameters.");
             }
 
-        } else {
+        } else {        // ressource statique
 
             try {
 
