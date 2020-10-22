@@ -91,7 +91,7 @@ public class WebServer {
                 line = bufferedReader.readLine();
             }
         } catch (FileNotFoundException e) {
-            System.err.println("Resource not found: " + resource);
+            System.err.println("Resource not found: " + resource_path + resource);
         } catch (IOException e) {
             System.err.println("IOException while sending text resource");
             e.printStackTrace();
@@ -398,8 +398,9 @@ public class WebServer {
 
         // debug
         System.err.println("Working Directory = " + System.getProperty("user.dir"));
-        String[] cwd_path = System.getProperty("user.dir").split(Pattern.quote("\\"));
+        String[] cwd_path = System.getProperty("user.dir").split("/");
 
+	System.err.println("cwd path last elem:" + cwd_path[cwd_path.length - 1]);
         if (cwd_path[cwd_path.length - 1].equals("HTTP_server")) {  // Linux cwd
             resource_path = "./doc/resources";
         }
