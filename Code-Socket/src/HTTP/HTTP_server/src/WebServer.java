@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Serveur HTTP basé sur l'exemple de "Chapter 1 Programming Spiders, Bots and
@@ -397,7 +398,12 @@ public class WebServer {
 
         // debug
         System.err.println("Working Directory = " + System.getProperty("user.dir"));
-        
+        String[] cwd_path = System.getProperty("user.dir").split(Pattern.quote("\\"));
+
+        if (cwd_path[cwd_path.length - 1].equals("HTTP_server")) {  // Linux cwd
+            resource_path = "./doc/resources";
+        }
+
         try {
             // create the main server socket
             s = new ServerSocket(port);
@@ -419,7 +425,7 @@ public class WebServer {
                 out = new PrintWriter(remote.getOutputStream());
 
                 // read the HTTP headers
-                List<String> request = new ArrayList<String>();
+                List<String> request = new ArrayList<>();
                 String line;
                 do {
                     line = in.readLine();
