@@ -150,6 +150,38 @@ public class WebServer {
     }
 
     /**
+     * Exécute le script Python demandé et renvoie le résultat produit sur la
+     * sortie standard.
+     *
+     * @param file Le chemin relatif du fichier par rapport au dossier de
+     *             ressources
+     * @param args Les arrguments à passer au script
+     * @see WebServer#handleGet(List)
+     */
+    protected List<String> runPythonScript(String file, List<String> args) throws IOException {
+
+        List<String> output = new ArrayList<>();
+
+        String res;
+        StringBuilder command = new StringBuilder("python ");
+        command.append(resource_path);
+        command.append(file);
+        for (String arg : args) {
+            command.append(" ");
+            command.append(arg);
+        }
+
+        Process process = Runtime.getRuntime().exec(command.toString());
+        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+        while ((res = in.readLine()) != null) {
+            output.add(res);
+        }
+
+        return output;
+    }
+
+    /**
      * Envoie la ressource demandée au client dans le corps de la réponse HTTP,
      * puis met fin à la connexion
      *
@@ -157,13 +189,15 @@ public class WebServer {
      *                 rapport au dossier racine des ressources)
      * @throws IOException Lève une IOException en cas de problème d'écriture
      *                     sur la sortie de la socket liée au client.
+     * @see WebServer#handleGet(List)
      */
     protected void getResource(String resource) throws IOException {
 
         // find resource type
         String[] split_resource = resource.split("\\.");
-        String resource_type = split_resource[split_resource.length - 1];
+        String resource_type = split_resource[split_resource.length - 1].split("\\?")[0];
         String content_type;
+        boolean isDynamic = false;
 
         switch (resource_type) {
             case "html":
@@ -187,26 +221,63 @@ public class WebServer {
             case "css":
                 content_type = "text/css";
                 break;
+            case "py":
+                content_type = "text/plain";
+                isDynamic = true;
             default:
                 content_type = "text/plain";
                 break;
         }
 
-        try {
+        if (isDynamic) {
 
-            File file = new File(resource_path + resource);
+            try {
+                // parse arguments
+                String file = resource.split("\\?")[0];
+                String raw_args = resource.split("\\?")[1];
+                List<String> args = new ArrayList<>();
 
-            if (file.isFile()) {
-                sendHeaders(200, content_type);
-                Files.copy(file.toPath(), remote.getOutputStream());
-            } else {    // file not found
-                System.err.println("File not found : " + resource);
+                for (String arg : raw_args.split("&")) {
+                    args.add(arg.split("=")[1]);
+                }
+
+                // run the (python) dynamic resource and get its response
+                List<String> res = runPythonScript(file, args);
+
+                sendHeaders(200, "text/plain");
+
+                for (String line : res) {
+                    out.write(line);
+                }
+
+            } catch (IOException e) {
+
+                System.err.println("Error while trying to run target resource: " + resource);
                 notFound();
                 return;
+            } catch (ArrayIndexOutOfBoundsException e){
+                sendHeaders(400);
+                out.write("Error, please fill in the required script parameters.");
             }
 
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+        } else {
+
+            try {
+
+                File file = new File(resource_path + resource);
+
+                if (file.isFile()) {
+                    sendHeaders(200, content_type);
+                    Files.copy(file.toPath(), remote.getOutputStream());
+                } else {    // file not found
+                    System.err.println("File not found : " + resource);
+                    notFound();
+                    return;
+                }
+
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
         }
 
         endResponse();
@@ -288,7 +359,7 @@ public class WebServer {
      *
      * @param request Les lignes de la requête reçue, sous forme de List<String>
      * @see WebServer#handleGet(List)
-     * @see WebServer#handleDelete(List)
+     * @see WebServer#handlePost(List, BufferedReader)
      */
     private void handleDelete(List<String> request) {
 
