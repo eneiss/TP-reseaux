@@ -163,6 +163,9 @@ public class WebServer {
      * @param file Le chemin relatif du fichier par rapport au dossier de
      *             ressources
      * @param args Les arrguments à passer au script
+     * @return Renvoie les lignes de la sortie standard du script
+     * @throws IOException Lève une IOException lorsqu'un problème de lecture
+     *                     apparaît lors de l'appel au script
      * @see WebServer#handleGet(List)
      */
     protected List<String> runPythonScript(String file, List<String> args) throws IOException {
