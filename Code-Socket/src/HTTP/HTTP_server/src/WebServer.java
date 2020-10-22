@@ -394,6 +394,10 @@ public class WebServer {
 
         System.out.println("Webserver starting up on port " + Integer.toString(port));
         System.out.println("(press ctrl-c to exit)");
+
+        // debug
+        System.err.println("Working Directory = " + System.getProperty("user.dir"));
+        
         try {
             // create the main server socket
             s = new ServerSocket(port);
