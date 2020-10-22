@@ -1,3 +1,3 @@
-javac -d classes src/*.java
-java -classpath classes chat_TCP.src.ServerConnectionThread 1234
+javac -d bin src/*.java
+java -classpath bin chat_TCP.src.ServerConnectionThread 1234
 
