@@ -17,7 +17,7 @@ Contient 4 sous-projets dans CodeSocket/src :
 
 ## Structure
 
-**Structure des sous-projets chat_TCP et HTTP/HTTP_server**
+**Structure des sous-projets chat_TCP et HTTP/HTTP_server**  
 Le dossier du sous-projet contient 4 sous-dossiers :
 - **src** : contient les fichiers source .java du sous-projet.
 - **bin** : contient les versions .class compilées des fichiers source .java.
