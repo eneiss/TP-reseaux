@@ -15,6 +15,9 @@ Contient 4 sous-projets dans CodeSocket/src :
 - [Chat Multicast](Code-Socket/src/chat_multicast) : Système de chat en ligne de commande, utilisant le multicast UDP, et donc N clients sans serveur.
 - [Stream](Code-Socket/src/stream) : Fichiers de démonstration de l'utilisation de socket en Java, [disponibles sur Moodle](https://moodle.insa-lyon.fr/course/view.php?id=5793).
 
+<img src="https://github.com/eneiss/TP-reseaux/blob/master/diagramme.png" width="50%">  
+Logique du système de chat TCP
+
 ## Structure
 
 **Structure des sous-projets chat_TCP et HTTP/HTTP_server**  
@@ -28,7 +31,7 @@ Il contient également des scripts bash pour l'automatisation de la compilation 
 
 ## Compilation et Exécution
 
-**Chat TCP**
+**Chat TCP**  
 Dans le répertoire [Code-Socket/src/chat_TCP](Code-Socket/src/chat_TCP), la commande  
     `javac -d bin src/*.java`  
 permet de compiler le code source du sous-projet (src/) et de produire les fichiers .class (bin/).  
@@ -40,7 +43,7 @@ La commande
 permet de démarrer un client, et de le connecter au serveur localisé sur (host) et dont la socket de connexion est liée au port (port). Le client tente immédiatement de se connecter, puis ouvre son IHM. Il peut être utilisé via l'IHM aussi bien que via la console, en parallèle.
 Alternativement, les fichiers [launch_chat_server.sh](Code-Socket/src/chat_TCP/launch_chat_server.sh) et [launch_chat_client.sh](Code-Socket/src/chat_TCP/launch_chat_client.sh) contiennent ces commandes, et peuvent être exécutés directement pour compiler et démarrer respectivement le serveur et un client. Ils utilisent le port 1234 et l'hôte local, mais peuvent être modifiés pour constituer un raccourci à une configuration couramment utilisée.
 
-**Serveur HTTP**
+**Serveur HTTP**  
 Dans le répertoire [Code-Socket\src\HTTP\HTTP_server](Code-Socket\src\HTTP\HTTP_server), la commande  
     `javac -d bin src/*.java`  
 permet de compiler le code source du sous-projet (src/) et de produire les fichiers .class (bin/).  
