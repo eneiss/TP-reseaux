@@ -22,7 +22,8 @@ Le dossier du sous-projet contient 4 sous-dossiers :
 - **src** : contient les fichiers source .java du sous-projet.
 - **bin** : contient les versions .class compilées des fichiers source .java.
 - **doc** : contient la javadoc du sous-projet, à consulter en ouvrant index.html.
-- **lib** : contient les bibliothèques nécessaires au sous-projet (actuellement vide).  
+- **lib** : contient les bibliothèques nécessaires au sous-projet (actuellement vide).
+
 Il contient également des scripts bash pour l'automatisation de la compilation et de l'exécution des deux sous-projets.
 
 ## Compilation et Exécution
